@@ -1,0 +1,45 @@
+<div class="container">
+    <div class="row justify-content-center">
+        <div class=" card1 col-md-4 login-container">
+            <h2 class="text-center mb-4">Registro</h2>
+            <div class="text-center mb-4">
+                <img src="futbolista-01.gif" alt="futbolista" width="80">
+            </div>
+            <form action="/formulario" method="post">
+                <!-- Campo Cedula -->
+                <div class="mb-3">
+                    <label for="Cedula" class="form-label">Cedula:</label>
+                    <input type="text" class="form-control" name="Cedula" id="Cedula" placeholder="Ingrese su cedula"
+                        required>
+                </div>
+                <!-- Campo Nombre -->
+                <div class="mb-3">
+                    <label for="Nombre_de_usuario" class="form-label">Nombre de Usuario:</label>
+                    <input type="text" class="form-control" name="Nombre_de_usuario" id="Nombre_de_usuario"
+                        placeholder="Ingrese su Usuario" required>
+                </div>
+ 
+                <!-- Campo Correo -->
+                <div class="mb-3">
+                    <label for="Correo" class="form-label">Correo Electrónico:</label>
+                    <input type="email" class="form-control" name="Correo" id="Correo"
+                        placeholder="Ingrese su correo electrónico" required>
+                </div>
+
+                <!-- Campo Teléfono -->
+                <div class="mb-3">
+                    <label for="Telefono" class="form-label">Teléfono:</label>
+                    <input type="tel" class="form-control" name="Telefono" id="Telefono"
+                        placeholder="Ingrese su número de teléfono" required>
+                </div>
+                {{!-- campo password --}}
+                <div class="mb-3">
+                    <label for="password" class="form-label">Contraseña:</label>
+                    <input type="password" class="form-control" name="password" id="password"
+                        placeholder="Ingrese su contraseña" required>
+                </div>
+
+                <!-- Botón de Envío -->
+                <button type="submit" class="btn btn-primary">Registrarse</button>
+            </form>
+        </div>
