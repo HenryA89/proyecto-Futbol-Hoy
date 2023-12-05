@@ -2,18 +2,19 @@ import conexion from "./conexion.js";
 import bcrypt from "bcrypt"
 import passport from "passport";
 import {Strategy as LocalStrategy} from "passport-local";
+import flash from "connect-flash";
 
 
 passport.use("local", new LocalStrategy(async (nombre_de_usuario, password, done) => {
-    const [dato] = await conexion.query("SELECT * FROM registro WHERE Nombre_de_usuario AND password = ?", [nombre_de_usuario]);
+    const [dato] = await conexion.query("SELECT * FROM registro WHERE Nombre_de_usuario = ?", [nombre_de_usuario]);
     if (!dato.length) {
-        await req.setFlash("error", "Usuario no encontrado");
+        await req.flash("error", "Usuario no encontrado");
         return done(null, false);
     }
     const user = dato[0];
     const validar = await bcrypt.compare(password, user.password);
     if (validar) {
-        await req.setFlash("error", "Incorrect Password");
+        await req.flash("error", "Incorrect Password");
         return done(null, false);
     }
     done(null, user)
