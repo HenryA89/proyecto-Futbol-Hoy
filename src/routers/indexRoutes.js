@@ -25,15 +25,16 @@ router.get("/formulario", (req, res) => {
 router.post("/formulario", async (req, res) => {
     const data = req.body;
     const user = await conexion.query("SELECT * FROM registro WHERE Cedula = ?", [data.cedula]);
-    if (user.lenght > 0) {
-        console.log("existe");
-    }
-    else {
+    if (!user) {
         const password = await encrypt(data.password);
         data.password = password;
         await conexion.query("INSERT INTO registro SET ?", [data]);
-        req.getFlash('message', 'Usuario registrado con éxito');
-        res.redirect("index")
+        req.flash('message', 'Usuario registrado con éxito');
+        res.redirect("/")
+    }
+    else {
+        req.flash("message", "Usuario no ha sido registrado, ya existe!")
+        console.log("existe");
     }
 }
 )

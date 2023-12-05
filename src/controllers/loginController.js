@@ -6,12 +6,13 @@ import flash from "connect-flash";
 
 
 passport.use("local", new LocalStrategy(async (nombre_de_usuario, password, done) => {
-    const [dato] = await conexion.query("SELECT * FROM registro WHERE Nombre_de_usuario = ?", [nombre_de_usuario]);
-    if (!dato.length) {
+    const dato = await conexion.query("SELECT * FROM registro WHERE Nombre_de_usuario = ?", [nombre_de_usuario]);
+    if (!dato) {
+        console.log("no registrado")
         await req.flash("error", "Usuario no encontrado");
         return done(null, false);
     }
-    const user = dato[0];
+    const user = dato.password;
     const validar = await bcrypt.compare(password, user.password);
     if (validar) {
         await req.flash("error", "Incorrect Password");
