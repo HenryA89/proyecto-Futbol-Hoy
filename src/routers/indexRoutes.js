@@ -33,23 +33,22 @@ router.post("/formulario", async (req, res) => {
         res.redirect("/")
     }
     else {
-        req.flash("message", "Usuario no ha sido registrado, ya existe!")
+        req.flash("message", "Usuario no ha sido registrado, ya existe!");
         console.log("existe");
+        res.redirect("/formulario");
     }
 }
 )
-
-
-router.get("/principal", principal, (req, res) => {
+router.get("/principal", (req, res) => {
     req.getFlash("message")
     res.render("principal", { title: "Home" })
 })
 
-router.get("/canchas", buscar, (req, res) => {
+router.get("/canchas",  (req, res) => {
     res.render("canchas", { title: "Canchas" })
 })
 
-router.get("/eventos", eventos, (req, res) => {
+router.get("/eventos",  (req, res) => {
     res.render("eventos", { title: "Eventos" })
 })
 export default router

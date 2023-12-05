@@ -7,3 +7,10 @@ export const login = passport.authenticate("local", {
     passReqToCallback: true,
     failureFlash: true,
   });
+
+  export const register = passport.authenticate("register", {
+    successRedirect: "/principal",
+    failureRedirect: "/",
+    passReqToCallback: true,
+    failureFlash: true,
+  });
