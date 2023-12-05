@@ -11,7 +11,7 @@ import {login} from "./autentication.js";
 const router = express.Router();
 
 
-router.get("/index", (req, res) => {
+router.get("/", (req, res) => {
     res.render("index")
 })
 

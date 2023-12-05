@@ -5,8 +5,8 @@ import bodyParser from "body-parser";
 import { engine } from "express-handlebars";
 import router from "./routers/indexRoutes.js";
 import morgan from "morgan";
-import {promiseConnectFlash} from "async-connect-flash"
 import session from "express-session";
+import flash from "connect-flash"
 import passport from "passport";
 import "./controllers/loginController.js"
 import MySQLsession from "express-mysql-session";
@@ -49,7 +49,7 @@ app.use(session({
   saveUninitialized: false,
   store: new MySQLStore({}, conexion)
 }));
-app.use(promiseConnectFlash());
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -57,8 +57,8 @@ app.use(express.static(path.join(__dirname, "views")));
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use(async (req, res, next) => {
-  app.locals.success = await req.getFlash("message");
-  app.locals.error = await req.getFlash("error");
+  app.locals.success = await req.flash("message");
+  app.locals.error = await req.flash("error");
   app.locals.user = req.user;
   next();
 });
