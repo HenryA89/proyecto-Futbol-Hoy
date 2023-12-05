@@ -1,36 +1,31 @@
-import express from "express";
 import conexion from "./conexion.js";
 import bcrypt from "bcrypt"
 import passport from "passport";
-import flash from "connect-flash"
-import LocalStrategy from "passport-local";
+import {Strategy as LocalStrategy} from "passport-local";
 
 
-
- passport.use("local.login", new LocalStrategy(async (nombre_de_usuario, password, done) => {
-    await conexion.query("SELECT * FROM registro WHERE Nombre_de_usuario AND password = ?", [nombre_de_usuario, password], (err, user) => {
-        if (err) throw err;
-        if (user) {
-            const password = data.password
-            bcrypt.compare(password, user.password, (err, res) => {
-                if (res) {
-                    done(null, user, req.flash("success", "Bienvenido", + user.nombre_de_usuario))
-                } else { done(null, req.flash("message", "Usuario o contraseña incorrecta!")) }
-            })
-        }
+passport.use("local", new LocalStrategy(async (nombre_de_usuario, password, done) => {
+    const [dato] = await conexion.query("SELECT * FROM registro WHERE Nombre_de_usuario AND password = ?", [nombre_de_usuario]);
+    if (!dato.length) {
+        await req.setFlash("error", "Usuario no encontrado");
+        return done(null, false);
     }
-    ) 
- })
-);
+    const user = dato[0];
+    const validar = await bcrypt.compare(password, user.password);
+    if (validar) {
+        await req.setFlash("error", "Incorrect Password");
+        return done(null, false);
+    }
+    done(null, user)
+ } )
+)
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+  });
+  
+  passport.deserializeUser(async (id, done) => {
+    const [rows] = await pool.query("SELECT * FROM registro WHERE id = ?", [id]);
+    done(null, rows[0]);
+  });
 
-export default passport
 
-
-
-
-
-
-// const data = req.body;
-// const sql = "SELECT * FROM registro WHERE nombre =?";
-// const user = conexion.query(sql,data.nombre);
-// bcrypt.compare(data.nombre,user)

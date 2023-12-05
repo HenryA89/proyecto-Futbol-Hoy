@@ -6,11 +6,9 @@ export const encrypt = async (password) => {
   return hash;
 };
 export const comparar = async (password, savedPassword) => {
-  try {
+  
     return await bcrypt.compare(password, savedPassword);
-  } catch (e) {
-    console.log(e)
-  }
+  
 };
 
 

@@ -5,20 +5,20 @@ import bodyParser from "body-parser";
 import { engine } from "express-handlebars";
 import router from "./routers/indexRoutes.js";
 import morgan from "morgan";
-import flash from "connect-flash";
+import {promiseConnectFlash} from "async-connect-flash"
 import session from "express-session";
 import passport from "passport";
-// import MySQLStore from "express-mysql-session";
-// import database from "./store.js" 
-// import conexion from "./controllers/conexion.js";
-
+import "./controllers/loginController.js"
+import MySQLsession from "express-mysql-session";
+import conexion from "./controllers/conexion.js";
+import cookieParser from "cookie-parser";
 
 
 
 // llamamos a los metodos
 const app = express();
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const MySQLStore = MySQLsession(session)
 
 // Configuracion Puerto
 app.set("port", process.env.PORT || 3000); 
@@ -39,27 +39,49 @@ app.engine(
 app.set("view engine", ".hbs");
 
 // LLAMAMOMS A MIDDLWERES
-app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true}));
-app.use(express.static(path.join(__dirname, "views")));
-app.use(express.static(path.join(__dirname, "public")));
+app.use(bodyParser.json());
 app.use(morgan("dev"));
+app.use(cookieParser("Tabatha1006"));
 app.use(session({
   secret: "message",
   resave: false,
   saveUninitialized: false,
-  cookie:{secure:true}
-}))
-app.use(flash());
-app.use(passport.initialize())
+  store: new MySQLStore({}, conexion)
+}));
+app.use(promiseConnectFlash());
+app.use(passport.initialize());
 app.use(passport.session());
 
-app.use((req,res,next)=>{app.locals.message = req.flash("message");
-next();
-})
+app.use(express.static(path.join(__dirname, "views")));
+app.use(express.static(path.join(__dirname, "public")));
+
+app.use(async (req, res, next) => {
+  app.locals.success = await req.getFlash("message");
+  app.locals.error = await req.getFlash("error");
+  app.locals.user = req.user;
+  next();
+});
 
 // RUTAS importada
 app.use(router);
+
+
+// app.use((req, res, next) => {
+//   const err = new Error("Not Found");
+//   err.status = 404;
+//   next(err);
+// });
+
+// app.use((err, req, res, next) => {
+//   console.log("Error", err);
+//   res.status(err.status || 500);
+//   res.render("error", {
+//     message: err.message,
+//     status: err.status,
+//   });
+// });
+
 
 // RUN SERVIDOR
 app.listen(app.get("port"),()=>{
